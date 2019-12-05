@@ -1,0 +1,10 @@
+.search{
+  z-index: 999999;
+  position: absolute;
+  top: 16px; left: 48px;
+  width: 90px; max-width: 350px;
+  transition: .5s;
+  &.mat-focused{
+    width: 100%;
+  }
+}
