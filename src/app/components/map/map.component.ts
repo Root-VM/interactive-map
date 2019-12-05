@@ -17,7 +17,7 @@ export class MapComponent implements OnInit {
         {maxZoom: 18, minZoom: 13})
     ],
     center: L.latLng(48.50835977515098 , 32.26547241210938),
-    zoom: 14
+    zoom: 13
   };
   schoolData: Array<any>;
 
@@ -63,7 +63,6 @@ export class MapComponent implements OnInit {
     const pointLayer = this.schoolData.find( item => this.checkPolygonHavePoint([location.y, location.x], item.layer));
     if (pointLayer) {
       L.Routing.control({
-        showAlternatives: true,
         lineOptions: {styles: [{color: '#242c81', weight: 7}]},
         fitSelectedRoutes: false,
         waypoints: [
