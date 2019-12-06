@@ -19,7 +19,9 @@ export class MapComponent implements OnInit {
     center: L.latLng(48.50835977515098 , 32.26547241210938),
     zoom: 13
   };
+  polygonMarkersOnly: Array<any> = [];
   schoolData: Array<any>;
+  mapRouting;
 
   constructor(private regionService: RegionService) {}
 
@@ -33,6 +35,7 @@ export class MapComponent implements OnInit {
         this.layers.push(L.marker(item.school[0].location, this.markerIcon()).bindPopup(this.noteSchoolPopup(item.school[0])));
         this.layers.push(L.polygon(item.layer, {color: item.color, weight: 1}));
       }
+      this.polygonMarkersOnly =  this.layers;
       this.schoolData = data;
     });
   }
@@ -55,21 +58,29 @@ export class MapComponent implements OnInit {
 
   onMapReady(map: L.Map) {
     this.map = map;
+    this.map.setMaxBounds([[48.61838518688487, 32.43885040283204], [48.39798098726997, 32.09243774414063]]);
   }
 
   changeView(location) {
-    this.map.panTo(new L.LatLng(location.y, location.x), {animate: true, duration: 1});
-    this.layers.push(L.marker([location.y, location.x], this.markerIcon(false)));
+    this.map.setView(new L.LatLng(location.y, location.x), 15, {animate: true, duration: 1});
+    this.layers = [...this.polygonMarkersOnly, L.marker([location.y, location.x], this.markerIcon(false))];
     const pointLayer = this.schoolData.find( item => this.checkPolygonHavePoint([location.y, location.x], item.layer));
     if (pointLayer) {
-      L.Routing.control({
+      if (!!this.mapRouting) {
+        this.map.removeControl(this.mapRouting);
+      }
+
+      this.mapRouting = L.Routing.control({
         lineOptions: {styles: [{color: '#242c81', weight: 7}]},
         fitSelectedRoutes: false,
+        show: false,
         waypoints: [
           L.latLng(location.y, location.x),
           L.latLng(pointLayer.school[0].location[0] , pointLayer.school[0].location[1])
         ]
-      }).addTo(this.map);
+      });
+
+      this.mapRouting.addTo(this.map);
     }
   }
 

@@ -1,4 +1,4 @@
-<mat-form-field class="search">
+<mat-form-field class="search" [ngClass]="{'active': !!inputText}">
   <input type="text" placeholder="Пошук" matInput [(ngModel)]="inputText" [matAutocomplete]="auto"
          (keyup)="autocomplete()">
   <mat-autocomplete #auto="matAutocomplete">
